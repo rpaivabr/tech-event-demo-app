@@ -1,0 +1,10 @@
+<div class="container">
+  <mat-list role="list">
+    @for (attendee of attendees(); track attendee.cpf) {
+      <mat-list-item role="listitem">
+        <span>{{ attendee.name }} - {{ attendee.email }}</span>
+      </mat-list-item>
+    }
+  </mat-list>
+  <button matButton="filled" (click)="add()">Adicionar Participante</button>
+</div>

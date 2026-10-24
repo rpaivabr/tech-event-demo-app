@@ -1,0 +1,5 @@
+<p>{{ isNew() ? 'Novo participante' : 'Participante existente' }}</p>
+<p>CPF: {{ id() }}</p>
+<p>Usuário existente: {{existingUser() | json}}</p>
+<app-attendee-form />
+<a routerLink="/">Voltar para home</a>

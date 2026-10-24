@@ -1,0 +1,15 @@
+<form [formRoot]="attendeeForm">
+  <input placeholder="Nome completo" [formField]="attendeeForm.name" />
+  <input placeholder="CPF" [formField]="attendeeForm.cpf" />
+  <input placeholder="Email" [formField]="attendeeForm.email" />
+  @if (attendeeForm.email().invalid()) {
+  <ul>
+    @for (error of attendeeForm.email().errors(); track error) {
+    <li>{{ error.message }}</li>
+    }
+  </ul>
+  }
+  <button [disabled]="attendeeForm().invalid()">Salvar</button>
+</form>
+
+<p>{{ attendee() | json }}</p>

@@ -1,0 +1,10 @@
+<h2>Total de participantes: {{totalAttendees()}}</h2>
+@if (!isLoading()) {
+  <app-attendee-list [attendees]="attendees()" (addNew)="addAttendee($event)" />
+  <a routerLink="/cpf">Ir para detalhe</a>
+} @else {
+  <p>Carregando...</p>
+}
+@if (isErrored()) {
+  <p style="color: red;">Não foi possível carregar a lista</p>
+}

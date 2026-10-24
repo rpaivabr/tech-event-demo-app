@@ -4,9 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Attendee } from '../../interfaces/attendee';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [MatListModule, MatButtonModule, MatIconModule],
+  imports: [MatListModule, MatButtonModule, MatIconModule, RouterLink],
   selector: 'app-attendee-item',
   styleUrl: './attendee-item.scss',
   templateUrl: './attendee-item.html',

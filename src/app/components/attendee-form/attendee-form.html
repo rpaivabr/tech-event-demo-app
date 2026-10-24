@@ -1,15 +1,38 @@
-<form [formRoot]="attendeeForm">
-  <input placeholder="Nome completo" [formField]="attendeeForm.name" />
-  <input placeholder="CPF" [formField]="attendeeForm.cpf" />
-  <input placeholder="Email" [formField]="attendeeForm.email" />
-  @if (attendeeForm.email().invalid()) {
-  <ul>
-    @for (error of attendeeForm.email().errors(); track error) {
-    <li>{{ error.message }}</li>
+<div class="flex-column">
+  <mat-form-field>
+    <mat-label>Nome</mat-label>
+    <input matInput [formField]="attendeeForm.name">
+    @if (attendeeForm.name().invalid()) {
+    <mat-error>
+      @for (error of attendeeForm.name().errors(); track error) {
+      <span>{{ error.message }}</span>
+      }
+    </mat-error>
     }
-  </ul>
-  }
-  <button [disabled]="attendeeForm().invalid()">Salvar</button>
-</form>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>CPF</mat-label>
+    <input matInput [formField]="attendeeForm.cpf">
+    @if (attendeeForm.cpf().invalid()) {
+    <mat-error>
+      @for (error of attendeeForm.cpf().errors(); track error) {
+      <span>{{ error.message }}</span>
+      }
+    </mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput [formField]="attendeeForm.email">
+    @if (attendeeForm.email().invalid()) {
+    <mat-error>
+      @for (error of attendeeForm.email().errors(); track error) {
+      <span>{{ error.message }}</span>
+      }
+    </mat-error>
+    }
+  </mat-form-field>
 
-<p>{{ attendee() | json }}</p>
+  <!-- desabilitar o botão caso formulário inválido, ao clicar emite o valor editado ou novo -->
+  <button matButton="filled" [disabled]="attendeeForm().invalid()" (click)="saveAttendee()">Salvar</button>
+</div>

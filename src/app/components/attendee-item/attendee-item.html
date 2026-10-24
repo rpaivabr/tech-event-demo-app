@@ -1,5 +1,5 @@
-<mat-list-item role="listitem">
-  <span>{{ attendee().name }} - {{ attendee().email }}</span>
+<mat-list-item role="listitem" style="cursor: pointer">
+  <span [routerLink]="attendee().cpf">{{ attendee().name }} - {{ attendee().email }}</span>
   <button (click)="deleteItem.emit()" matIconButton aria-label="Example icon button with a vertical three dot icon">
     <mat-icon>delete</mat-icon>
   </button>

@@ -1,50 +1,65 @@
-import { computed, resource, Service, Signal } from '@angular/core';
+import { computed, effect, inject, Service } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { Attendee, AttendeeDTO, mapFromDto, mapToDto } from '../interfaces/attendee';
+import { Router } from '@angular/router';
+
+export const newAttendee: Attendee = { name: '', cpf: '', email: '' };
 
 @Service()
 export class AttendeeData {
-  private attendeesResource = resource({
-    loader: async (): Promise<Attendee[]> => {
-      const res = await fetch('http://localhost:8084/entidade/v1/');
-      const data = await res.json();
-      return data.map((item: AttendeeDTO) => mapFromDto(item));
-    },
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  // melhor alternativa a promise apresentada na aula
+  private attendeesResource = httpResource<Attendee[]>(() => 'http://localhost:8084/entidade/v1/', {
+    parse: data => (data as AttendeeDTO[]).map(mapFromDto) as Attendee[],
+    defaultValue: [],
   });
-  attendees = computed(() => this.attendeesResource.value() || []);
-  totalAttendees = computed(() => this.attendees().length);
-  isLoading = computed(() => this.attendeesResource.isLoading());
-  isErrored = computed(() => this.attendeesResource.error());
 
-  getAttendees(): Signal<Attendee[]> {
-    return computed(() => this.attendeesResource.value() || []);
-  }
+  // estados derivados públicos
+  isLoading = this.attendeesResource.isLoading;
+  isErrored = this.attendeesResource.status;
+  attendees = computed(() => this.attendeesResource.value() ?? []);
+  totalAttendees = computed(() => this.attendees()?.length || 0);
 
+  log = effect(() => {
+    console.log('Attendees list:', this.attendeesResource.value());
+  });
+
+  // metodos públicos
   getByCpf(cpf?: string): Attendee | undefined {
     if (!cpf) return undefined;
     return this.attendees().find((attendee) => attendee.cpf === cpf);
   }
 
-  add(attendee: Attendee): Promise<void> {
-    const newAttendee = mapToDto(attendee);
-    console.log('Adding attendee:', newAttendee);
-    return fetch('http://localhost:8084/entidade/v1/', { 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newAttendee)
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to add attendee');
-      }
-      this.attendeesResource.reload();
-    });
+  async add(attendee: Attendee): Promise<void> {
+    try {
+      await firstValueFrom(
+        this.http.post<void>('http://localhost:8084/entidade/v1/', mapToDto(attendee)),
+      );
+      // invalidação, novo GET para renovar a lista (não faremos este)
+      // this.attendeesResource.reload();
+
+      // alternativa, atualizar a lista localmente
+      const attendees = this.attendees();
+      this.attendeesResource.set([...attendees, attendee]);
+
+      // navegar para home usando o serviço do angular Router
+      this.router.navigateByUrl('/');
+    } catch (error) {
+      console.error('Falha ao salvar', error);
+    }
   }
 
-  remove(cpf: string): void {
-    // this.attendees.update((attendees) =>
-    //   attendees.filter((attendee) => attendee.cpf !== cpf)
-    // );
+  async remove(cpf: string): Promise<void> {
+    try {
+      await firstValueFrom(this.http.delete<void>(`http://localhost:8084/entidade/v1/${cpf}`));
+      // alternativa, atualizar a lista localmente
+      const attendees = this.attendees();
+      this.attendeesResource.set(attendees.filter((attendee) => attendee.cpf !== cpf));
+    } catch (error) {
+      console.error('Falha ao excluir', error);
+    }
   }
-
 }

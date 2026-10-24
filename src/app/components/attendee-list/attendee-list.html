@@ -1,10 +1,11 @@
 <div class="container">
   <mat-list role="list">
     @for (attendee of attendees(); track $index) {
-      <app-attendee-item [attendee]="attendee" (deleteItem)="deleteItem($index)" />
+    <app-attendee-item 
+      [attendee]="attendee" 
+      (deleteItem)="confirmDelete(attendee.cpf)" />
     } @empty {
-      <p>Nenhum participante encontrado. Crie um novo agora.</p>
+    <p>Nenhum participante encontrado. Crie um novo agora.</p>
     }
   </mat-list>
-  <button matButton="filled" routerLink="/new">Adicionar Participante</button>
 </div>

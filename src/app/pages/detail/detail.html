@@ -1,5 +1,5 @@
-<p>{{ isNew() ? 'Novo participante' : 'Participante existente' }}</p>
-<p>CPF: {{ id() }}</p>
-<p>Usuário existente: {{existingUser() | json}}</p>
-<app-attendee-form />
-<a routerLink="/">Voltar para home</a>
+<div class="container flex">
+  <h3>{{ isNew() ? 'Adicionar' : 'Editar' }} participante</h3>
+  <a routerLink="/">Voltar para home</a>
+</div>
+<app-attendee-form [initialValue]="editableAttendee()" (save)="saveData($event)" />

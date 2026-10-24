@@ -1,10 +1,13 @@
-<h2>Total de participantes: {{totalAttendees()}}</h2>
+<div class="container flex">
+  <h3>Total de participantes: {{totalAttendees()}}</h3>
+  <button matButton="filled" routerLink="/new">Adicionar Participante</button>
+</div>
 @if (!isLoading()) {
-  <app-attendee-list [attendees]="attendees()" (addNew)="addAttendee($event)" />
-  <a routerLink="/cpf">Ir para detalhe</a>
+  <app-attendee-list 
+    [attendees]="attendees()" 
+    (addNew)="addAttendee($event)" 
+    (deleteItem)="deleteAttendee($event)"
+  />
 } @else {
   <p>Carregando...</p>
-}
-@if (isErrored()) {
-  <p style="color: red;">Não foi possível carregar a lista</p>
 }

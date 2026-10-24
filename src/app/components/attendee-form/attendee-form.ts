@@ -1,10 +1,11 @@
 import { Component, inject, input, linkedSignal, output } from '@angular/core';
-import { email, form, FormField, required, submit } from '@angular/forms/signals';
+import { email, form, FormField, max, maxLength, minLength, required, submit, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AttendeeData, newAttendee } from '../../services/attendee-data';
 import { Attendee } from '../../interfaces/attendee';
+import { cpfValidator } from '../../utils/cpf-validator';
 
 @Component({
   imports: [MatButtonModule, MatFormFieldModule, MatInputModule, FormField],
@@ -23,7 +24,11 @@ export class AttendeeForm {
   attendeeForm = form(this.attendee, (schemaPath) => {
     required(schemaPath.name, { message: 'Nome é obrigatório' });
     required(schemaPath.email, { message: 'Email é obrigatório' });
-    email(schemaPath.email, { message: 'Email inválido.' });
+    required(schemaPath.cpf, { message: 'CPF é obrigatório' });
+    email(schemaPath.email, { message: 'Email inválido' });
+    minLength(schemaPath.cpf, 11, { message: 'CPF está incompleto' });
+    maxLength(schemaPath.cpf, 11, { message: 'CPF está incompleto' });
+    validate(schemaPath.cpf, cpfValidator);
   });
 
   async saveAttendee() {
